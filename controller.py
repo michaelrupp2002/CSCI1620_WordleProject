@@ -7,15 +7,23 @@ from view import *
 class Controller(QMainWindow, Ui_MainWindow):
 
     def __init__(self, *args, **kwargs):
+        """
+        Initializes the GUI and creates all private variables specifically,
+        word_list and labels_list have data added to them.
+        :param args:
+        :param kwargs:
+        """
         super().__init__(*args, **kwargs)
         self.setupUi(self)
         self.__position = 0
         self.__clue = ""
         self.__guess = ""
+
         self.__word_list = []
         self.__word_file = open("words.txt")
         for word in self.__word_file:
             self.__word_list.append(word.strip().lower())
+
         self.__answer = random.choice(self.__word_list)
         self.__num_of_guesses = 0
         self.__guessed_correctly = False
@@ -29,6 +37,12 @@ class Controller(QMainWindow, Ui_MainWindow):
                               ]
 
     def keyPressEvent(self, event):
+        """
+        Function to handle the main code for the game when the user presses enter,
+        which takes in the input and resets the text edit.
+        :param event: Return key is the triggering event.
+        :return: None.
+        """
         if event.key() == Qt.Key_Return:
             if self.__num_of_guesses < 6 and not self.__guessed_correctly:
                 if self.input_word.text().strip().lower() in self.__word_list:
@@ -39,11 +53,18 @@ class Controller(QMainWindow, Ui_MainWindow):
                 else:
                     self.label_errors.setText('Word is not in list')
             if self.__guessed_correctly:
-                self.label_errors.setText('You guessed the word in' + str(self.__num_of_guesses) + 'guesses')
+                self.label_errors.setText('You guessed the word in ' + str(self.__num_of_guesses) + ' guesses')
             if self.__num_of_guesses == 6 and not self.__guessed_correctly:
-                self.label_errors.setText('Out of guesses the word was,' + self.__answer)
+                self.label_errors.setText('Out of guesses the word was ' + self.__answer)
 
-    def process_guess(self, answer, guess, num_guesses):
+    def process_guess(self, answer: str, guess: str, num_guesses: int):
+        """
+        Function to check how the letters in guess match the letters in answer.
+        :param answer: A randomly selected word from words.txt.
+        :param guess: User entered input from the textedit prompted by the enter key.
+        :param num_guesses: Amount of times a valid guess has been inputted .
+        :return: Returns self.__clue if it is equivalent to 5 correct letters.
+        """
         self.__position = 0
         self.__clue = ""
         for letter in guess:
